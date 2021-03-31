@@ -6,7 +6,7 @@ const io = require('socket.io')(http)
 
 app.use(express.static(join(__dirname, '..', 'public')))
 
-http.listen(3000)
+http.listen(process.env.PORT || 3000)
 
 const sockets = []
 io.on('connection', socket => {
