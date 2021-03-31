@@ -50,13 +50,23 @@ export class World {
     this.$root.appendChild(this.$el)
 
     this.ctx = this.$el.getContext('2d')
+
+    this.fuzzyRadius = 10;
   }
 
-  draw(player) {
+  draw(players) {
     // Clear canvas
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-  
-    // Draw segments
+    this.drawSegments()
+    for (const player of players) {
+      this.drawSightPolygons(player)
+    }
+    for (const player of players) {
+      this.drawDots(player)
+    }
+  }
+
+  drawSegments() {
     this.ctx.strokeStyle = "#999";
     for (const segment of segments) {
       this.ctx.beginPath();
@@ -64,35 +74,34 @@ export class World {
       this.ctx.lineTo(segment.b.x, segment.b.y);
       this.ctx.stroke();
     }
-  
-    // Sight Polygons
-    const fuzzyRadius = 10;
+  }
+
+  drawSightPolygons(player) {
     const polygons = [getSightPolygon(player.x, player.y, segments)];
     for (let angle = 0; angle < Math.PI * 2; angle += (Math.PI * 2) / 10) {
-      const dx = Math.cos(angle) * fuzzyRadius;
-      const dy = Math.sin(angle) * fuzzyRadius;
+      const dx = Math.cos(angle) * this.fuzzyRadius;
+      const dy = Math.sin(angle) * this.fuzzyRadius;
       polygons.push(getSightPolygon(player.x + dx, player.y + dy, segments));
     };
-  
-    // DRAW AS A GIANT POLYGON
+
     for (var i = 1; i < polygons.length; i++) {
       this.drawPolygon(polygons[i], "rgba(255,255,255,0.2)");
     }
     this.drawPolygon(polygons[0], "#fff");
-  
-    // Draw red dots
+  }
+
+  drawDots(player) {
     this.ctx.fillStyle = "#dd3838";
     this.ctx.beginPath();
     this.ctx.arc(player.x, player.y, 2, 0, 2 * Math.PI, false);
     this.ctx.fill();
     for (let angle = 0; angle < Math.PI * 2; angle += (Math.PI * 2) / 10) {
-      const dx = Math.cos(angle) * fuzzyRadius;
-      const dy = Math.sin(angle) * fuzzyRadius;
+      const dx = Math.cos(angle) * this.fuzzyRadius;
+      const dy = Math.sin(angle) * this.fuzzyRadius;
       this.ctx.beginPath();
       this.ctx.arc(player.x + dx, player.y + dy, 2, 0, 2 * Math.PI, false);
       this.ctx.fill();
     }
-  
   }
 
   drawPolygon(polygon, fillStyle) {

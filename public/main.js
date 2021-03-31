@@ -12,5 +12,5 @@ drawLoop()
 
 function drawLoop() {
   requestAnimationFrame(drawLoop);
-  world.draw(position);
+  world.draw([position, { x: position.x + 50, y: position.y + 50 }]);
 }
