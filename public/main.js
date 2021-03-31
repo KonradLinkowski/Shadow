@@ -1,5 +1,8 @@
 import { World } from "./world.js";
 import { touchstart, mousemove, touchmove, position }from './player.js';
+import { connect, getPositions } from "./socket.js";
+
+connect(position)
 
 const world = new World({
   selector: 'body',
@@ -12,5 +15,5 @@ drawLoop()
 
 function drawLoop() {
   requestAnimationFrame(drawLoop);
-  world.draw([position, { x: position.x + 50, y: position.y + 50 }]);
+  world.draw([position, ...getPositions()]);
 }
